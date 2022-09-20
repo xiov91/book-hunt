@@ -2,12 +2,6 @@ const { User, Book } = require('../models');
 
 const resolvers = {
     Query: {
-        books: async () => {
-            return Book.find();
-        },
-        book: async (parent, { bookId }) => {
-            return Book.findONe({ bookId });
-        },
         users: async () => {
             return User.find()
                 .select('-__v -password')
@@ -17,8 +11,15 @@ const resolvers = {
             return User.findOne({ username })
                 .select('-__v -password')
                 .populate('books');
-        }
-
+        },
+        books: async (parent, { title }) => {
+            const params = title ? { title } : {};
+            return Book.find(params);
+        },
+        book: async (parent, { bookId }) => {
+            return Book.findOne({ bookId });
+        } 
+        
     }
 };
 

@@ -25,7 +25,10 @@ const typeDefs = gql`
     }
 
     type Query {
-        books: [Book]
+        books(title: String): [Book]
+        book(bookId: String!): Book
+        users: [User]
+        user(username: String!): User
     }
 `;
 
