@@ -6,13 +6,13 @@ import { ADD_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 
 const SignupForm = () => {
-  const [userFormData, setUserFormData] = useSTate({
+  const [userFormData, setUserFormData] = useState({
     username: "",
     email: "",
     password: ""
   });
 
-  const [addUser, { error }] = useMutation(ADD_USER);
+  const [createUser, { error }] = useMutation(ADD_USER);
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
@@ -108,6 +108,7 @@ const SignupForm = () => {
           Submit
         </Button>
       </Form>
+      {error && <div>Something's awry!</div>}
     </>
   );
 };
