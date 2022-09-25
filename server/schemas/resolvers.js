@@ -7,30 +7,12 @@ const resolvers = {
         me: async (parent, args, context) => {
             if (context.user) {
                 const userData = await User.findOne({})
-                    .select('-__v -password')
-                    .populate('books');
+                    .select('-__v -password');
 
                 return userData;
             }
 
             throw new AuthenticationError('Not logged in!');
-        },
-        users: async () => {
-            return User.find()
-                .select('-__v -password')
-                .populate('books');
-        },
-        user: async (parent, { username }) => {
-            return User.findOne({ username })
-                .select('-__v -password')
-                .populate('books');
-        },
-        books: async (parent, { title }) => {
-            const params = title ? { title } : {};
-            return Book.find(params);
-        },
-        book: async (parent, { bookId }) => {
-            return Book.findOne({ bookId });
         }
     },
     Mutation: {
@@ -60,10 +42,10 @@ const resolvers = {
             if (context.user) {
                 const updatedUser = await User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $addToSet: { savedBooks: bookId } },
+                    { $addToSet: { savedBooks: author, description, title, bookId, image, link } },
                     { new: true }
-                ).populate('savedBooks');
-
+                );
+                
                 return updatedUser;
             }
 
@@ -73,12 +55,14 @@ const resolvers = {
             if (context.user) {
                 const updatedUser = await User.findOneAndUpdate(
                     { _id: context.user_id },
-                    { $pull: { savedBooks: bookId } },
+                    { $pull: { savedBooks: { bookId: bookId } } },
                     { new: true }
-                ).populate('savedBooks');
+                );
 
                 return updatedUser;
             }
+
+            throw new AuthenticationError('You need to be logged in!');
         }
     }
 };
