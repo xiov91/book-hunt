@@ -12,7 +12,7 @@ const SignupForm = () => {
     password: ""
   });
 
-  const [createUser, { error }] = useMutation(ADD_USER);
+  const [createUser] = useMutation(ADD_USER);
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
@@ -33,14 +33,12 @@ const SignupForm = () => {
     }
 
     try {
-      const response = await createUser(userFormData);
+      const { data } = await createUser({
+        variables: { ...userFormData },
+      });
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
+      const { token } = data.createUser.token;
 
-      const { token, user } = await response.json();
-      console.log(user);
       Auth.login(token);
     } catch (err) {
       console.error(err);
@@ -108,7 +106,6 @@ const SignupForm = () => {
           Submit
         </Button>
       </Form>
-      {error && <div>Something's awry!</div>}
     </>
   );
 };
